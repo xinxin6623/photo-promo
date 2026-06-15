@@ -1,0 +1,36 @@
+# photo-promo 配置中枢
+# 四档硬件 + 模型 + 阈值 + prompt 全在这切，只改 config 不改代码。
+
+# 硬件档位：cpu / small_gpu / large_gpu / mac
+# 影响模型加载的 device 选择（Phase 2/3 用）。老电脑先用 cpu 跑通。
+hardware: cpu
+
+# 状态机数据库（派生，可删重建）
+db_path: pipeline.db
+
+# 输出目录
+out_dir: out
+
+# ---- L0 元数据筛（Phase 1 实现）----
+l0:
+  min_width: 640        # 小于此宽淘汰
+  min_height: 480       # 小于此高淘汰
+  blur_threshold: 100.0 # 拉普拉斯方差，低于此判模糊
+  dark_threshold: 40    # 平均亮度，低于此判过暗
+  bright_threshold: 220 # 平均亮度，高于此判过曝
+
+# ---- L1 SigLIP 粗筛（Phase 2 实现）----
+l1:
+  model: google/siglip2-base-patch16-224
+  device: cpu           # 跟随 hardware，可单独覆盖
+  top_percent: 20       # 保留适配度 Top N%
+  prompt_file: prompts/l1_screen.txt
+
+# ---- L2 VLM 精筛 + 文案（Phase 3 实现）----
+l2:
+  provider: ark         # 默认火山方舟 Ark；可切其他 provider
+  model: doubao-1.5-vision-pro          # doubao-vision 系列模型名，或推理接入点 ID（ep-xxxx）
+  base_url: https://ark.cn-beijing.volces.com/api/v3  # OpenAI 兼容
+  # API key 不写这里，从环境变量 ARK_API_KEY 读（见 .env.example）
+  top_n: 50             # 最多送多少张给 VLM 精筛
+  prompt_file: prompts/l2_caption.txt

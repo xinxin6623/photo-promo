@@ -1,0 +1,20 @@
+# 状态机 DB（派生，可删重建）
+pipeline.db
+pipeline.db-*
+
+# 运行时输出
+/out/selected/
+/out/captions.md
+
+# 密钥
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+.uv/
+
+# OS
+.DS_Store
