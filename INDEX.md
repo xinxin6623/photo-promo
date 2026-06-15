@@ -7,13 +7,13 @@
 ## 当前接力点 (Handoff)
 
 ### 概述
-**下一步：Phase 2 — L1 SigLIP 粗筛**。加载 SigLIP 2（CPU 优先），用 `prompts/l1_screen.txt` 给图打宣传适配度分，保留 Top N%。会装较大的 transformers + 模型权重。
+**下一步：Phase 3 — L2 VLM 精筛+文案**。把 l1_done 的少量图发给火山方舟 Ark，一次调用同时做「是否适合宣传(带理由)」判断 + 生成含时间/位置/场景的文案，精选图复制到 `out/selected/`，文案写 `out/captions.md`。
 
 ### 明细
-- **2026-06-15**：Phase 0（骨架）+ Phase 1（L0 元数据筛）已完成并验证。
-  - Phase 2 实现点：`src/stage1_clip.py` 当前是占位流转；需替换为真实 SigLIP 打分写 `l1_score`，非 Top N% 的 `mark(stage='rejected')`。
-  - 模型/device/top_percent/prompt 路径都已在 `config.yaml` 的 `l1` 段就位。
-  - 依赖待加：`uv add transformers`（+ CPU 量化可选 onnxruntime）。
+- **2026-06-15**：Phase 0/1/2 已完成并验证（L0 元数据筛、L1 SigLIP 粗筛跑通）。
+  - Phase 3 实现点：`src/providers/ark.py` 当前 `score_and_caption` 是占位；需用 openai 库指向 Ark base_url，图转 base64 + `prompts/l2_caption.txt` 一次拿 verdict+caption。
+  - `src/stage2_vlm.py` 需补：按 verdict 决定入选、复制精选图、写 captions.md（含 taken_at/location 传入 context）。
+  - 依赖待加：`uv add openai`。需要 `.env` 填 `ARK_API_KEY`（用户那边确认 coding plan 能否调 API）。
 
 ## 项目简介
 

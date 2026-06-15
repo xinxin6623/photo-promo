@@ -40,7 +40,7 @@
 
 - [x] Phase 0 骨架 — 脚手架 + config + SQLite 状态机 + 样例图
 - [x] Phase 1 L0 元数据筛 — EXIF/GPS + 模糊/亮度/尺寸 + 离线逆地理编码
-- [ ] Phase 2 L1 SigLIP 粗筛 — 宣传适配度打分留 Top N%
+- [x] Phase 2 L1 SigLIP 粗筛 — 宣传适配度打分留 Top N%
 - [ ] Phase 3 L2 VLM 精筛+文案 — 火山方舟 Ark，一次调用判断+写文案
 - [ ] Phase 4 串联+断点续跑 — 一条命令跑全链路
 - [ ] Phase 5（可选）硬件适配 + 文案风格调优
@@ -54,6 +54,11 @@ grep "^## 2026-06" CHANGELOG.md                        # 2026 年 6 月所有动
 ```
 
 ---
+
+## 2026-06-15 #feat scope:stage1 - Phase 2 L1 SigLIP 粗筛
+
+- Why: CPU 零样本给图打宣传适配度净分，几万张里只留 Top N% 进 API 精筛省钱
+- 详见: src/siglip.py / src/stage1_clip.py / prompts/l1_screen.txt
 
 ## 2026-06-15 #docs scope:trio - 三件套标准化
 
