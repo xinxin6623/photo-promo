@@ -2,7 +2,7 @@
 trio: standard-v3
 trio-initialized: 2026-06-15
 status: active
-desc: "活动照片三层漏斗智能筛选+宣传文案生成"
+desc: 活动照片三层漏斗筛选+宣传文案生成
 ---
 
 <!--
