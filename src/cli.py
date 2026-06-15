@@ -30,7 +30,7 @@ def scan_and_register(conn, photos_dir: Path) -> int:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         prog="promo",
-        description="活动照片智能筛选 + 宣传文案生成（L0 元数据筛 → L1 SigLIP 粗筛 → L2 VLM 精筛+文案）",
+        description="活动照片智能筛选 + 结构化语义描述照片库（L0 元数据筛 → L1 SigLIP 粗筛 → L2 VLM 精筛+描述）",
     )
     parser.add_argument("photos_dir", help="待处理照片目录（递归扫描）")
     parser.add_argument("-c", "--config", default="config.yaml", help="配置文件路径（默认 config.yaml）")
@@ -49,7 +49,7 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
     cfg = load_config(args.config)
-    cfg.out_dir.mkdir(parents=True, exist_ok=True)
+    # TODO(Phase 4): 导出照片库 vault 时按需创建 library/ 目录（见 docs/io-contract.md §3.1）
 
     conn = db.init_db(cfg.db_path)
     log.info("数据库：%s | 硬件档位：%s", cfg.db_path, cfg.hardware)

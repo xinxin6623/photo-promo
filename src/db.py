@@ -4,7 +4,7 @@ stage 取值：
   pending   入库待处理
   l0_done   通过 L0 元数据筛
   l1_done   通过 L1 SigLIP 粗筛
-  l2_done   通过 L2 VLM 精筛（终态，已出文案）
+  l2_done   通过 L2 VLM 精筛入库（终态，已出结构化描述）
   rejected  任一阶段被淘汰（淘汰原因看对应字段）
 
 断点续跑：每个 stage 只取该阶段的 pending 图处理，跑挂重跑不会重复处理已完成的。
@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS photos (
     l0_reject   TEXT,               -- L0 淘汰原因 blur/dark/bright/tiny/corrupt，NULL=通过
     l1_score    REAL,               -- SigLIP 宣传适配度分（Phase 2 填）
     verdict     TEXT,               -- VLM 精筛结论+理由（Phase 3 填）
-    caption     TEXT,               -- 生成文案（Phase 3 填）
+    description TEXT,               -- 结构化语义描述 JSON（Phase 3 填，schema 见 io-contract §3.3）
     updated_at  TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_photos_stage ON photos(stage);

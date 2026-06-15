@@ -2,9 +2,10 @@
 pipeline.db
 pipeline.db-*
 
-# 运行时输出
-/out/selected/
-/out/captions.md
+# 照片库 vault 出口（Phase 4）：原图不提交，描述文本可提交
+/library/images/
+# 旧出口目录（已弃用，留空忽略）
+/out/
 
 # 密钥
 .env

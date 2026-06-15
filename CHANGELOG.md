@@ -41,9 +41,9 @@
 - [x] Phase 0 骨架 — 脚手架 + config + SQLite 状态机 + 样例图
 - [x] Phase 1 L0 元数据筛 — EXIF/GPS + 模糊/亮度/尺寸 + 离线逆地理编码
 - [x] Phase 2 L1 SigLIP 粗筛 — 宣传适配度打分留 Top N%
-- [ ] Phase 3 L2 VLM 精筛+文案 — 火山方舟 Ark，一次调用判断+写文案
-- [ ] Phase 4 串联+断点续跑 — 一条命令跑全链路
-- [ ] Phase 5（可选）硬件适配 + 文案风格调优
+- [ ] Phase 3 L2 VLM 精筛+结构化语义描述 — 火山方舟 Ark，一次调用判断+出描述 JSON
+- [ ] Phase 4 串联+导出照片库 vault — 一条命令跑全链路，导出 library/ + 图间互链
+- [ ] Phase 5（可选）硬件适配 + evolve（重打分/去重/补链）
 
 ## 检索示例
 
@@ -54,6 +54,11 @@ grep "^## 2026-06" CHANGELOG.md                        # 2026 年 6 月所有动
 ```
 
 ---
+
+## 2026-06-15 #docs scope:io-contract #breaking - 范围调整：照片库取代文案生成
+
+- Why: 工程定位改为产出结构化语义描述照片库，文案由下游 agent 自行生成
+- 详见: docs/io-contract.md / 设计方案.md §0+§6 / AGENTS.md 硬规则 8-9
 
 ## 2026-06-15 #feat scope:stage1 - Phase 2 L1 SigLIP 粗筛
 
