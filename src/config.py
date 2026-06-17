@@ -43,6 +43,10 @@ class Config:
     def l2(self) -> dict[str, Any]:
         return self.raw.get("l2", {})
 
+    @property
+    def export(self) -> dict[str, Any]:
+        return self.raw.get("export", {})
+
     # ---- 密钥（从环境变量读，不写进 yaml）----
     @property
     def ark_api_key(self) -> str | None:

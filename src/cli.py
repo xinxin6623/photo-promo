@@ -11,7 +11,7 @@ from pathlib import Path
 
 from .config import load_config
 from . import db
-from . import stage0_meta, stage1_clip, stage2_vlm
+from . import stage0_meta, stage1_clip, stage2_vlm, export
 
 # 支持的图片扩展名
 IMAGE_EXTS = {".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tiff", ".heic"}
@@ -49,7 +49,6 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
     cfg = load_config(args.config)
-    # TODO(Phase 4): 导出照片库 vault 时按需创建 library/ 目录（见 docs/io-contract.md §3.1）
 
     conn = db.init_db(cfg.db_path)
     log.info("数据库：%s | 硬件档位：%s", cfg.db_path, cfg.hardware)
@@ -61,6 +60,9 @@ def main(argv: list[str] | None = None) -> int:
     stage0_meta.run(conn, cfg)
     stage1_clip.run(conn, cfg)
     stage2_vlm.run(conn, cfg)
+
+    # Phase 4：把 l2_done 入库图导出成 library/ 照片库 vault
+    export.run(conn, cfg)
 
     log.info("各阶段统计：%s", db.counts_by_stage(conn))
     conn.close()

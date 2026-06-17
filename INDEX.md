@@ -7,16 +7,20 @@
 ## 当前接力点 (Handoff)
 
 ### 概述
-**下一步：Phase 3 — L2 VLM 精筛 + 结构化语义描述**。把 l1_done 的少量图发给火山方舟 Ark，一次调用同时做「是否适合入库(带理由)」判断 + 输出结构化语义描述 JSON（场景/主体/标签/氛围/人数…），写入 SQLite。
-**⚠ 依赖出入口契约**：实现前先按 [`docs/io-contract.md`](./docs/io-contract.md) §3.3 的描述 schema 来；其中标 `[可调]` 的字段待 James 拍板。
+**Phase 0–4 全部完成,全链路真机验证通过**。`uv run promo <dir>` 一条命令跑通 L0→L1→L2→导出 `library/` vault。
+**下一步：Phase 5（可选）evolve + 硬件适配**。对已建成 vault 做：连拍/重复去重（ADD/UPDATE/MERGE/NOOP，DELETE 只提议）、重打分、补 scene/tags、精修 `related` 互链、受控词表演化；以及 small_gpu/large_gpu/mac 硬件档位适配。
 
 ### 明细
-- **2026-06-15**：范围调整——**不再生成文案，改产出 obwiki 式照片库**（见 io-contract.md / 设计方案 §6）。Phase 0/1/2 实现不受影响（L0/L1 照旧）。
-  - Phase 3 实现点：`src/providers/ark.py` 的 `score_and_caption` → 改为 `score_and_describe`，用 openai 库指向 Ark base_url，图转 base64 + `prompts/l2_describe.txt` 一次拿 verdict + 结构化描述。
-  - `src/stage2_vlm.py`：按 verdict 决定入库，描述写 DB（taken_at/location 传入 context）。
-  - Phase 4 才做 `library/` vault 导出（index.md + photos/ + images/ + 互链）。
-  - 依赖待加：`uv add openai`。需 `.env` 填 `ARK_API_KEY`。
-  - 已就位：`prompts/l2_describe.txt`（描述 prompt）、db `description` 字段、provider 接口 `score_and_describe`、config `require_quality_gate`。
+- **2026-06-17**：Phase 4 完成并真机验证。`src/export.py` 把 l2_done 导出成 obwiki 式 vault。
+  - id=内容 hash 前 12 位；原图复制进 `images/`；`related` 按同 scene + taken_at ≤30min 自动建链（带「为什么相关」）；`index.md` 是 L0 句柄表。
+  - 真机验证：8 张研学连拍跑通，上午车厢组 / 下午石碑组按时间正确分簇互链（建 26 条），无跨簇误链。验证产物已清理（真实人物照片不入库）。
+  - 已拍板的 `[可调]` 默认（id=hash / 复制原图 / 同 scene+时间邻近建链）待去 io-contract 标记。
+- **2026-06-17**：Phase 3 完成。L2 真实接 Ark（OpenAI 兼容），一次调用拿 verdict + 结构化描述 JSON。
+  - `src/providers/ark.py`：openai client 指向 Ark base_url，图转 base64 data URL，`response_format=json_object`，含围栏剥离 / 非法 JSON 兜底（标 fit=False 不入库）；无 `ARK_API_KEY` 构造即报错。
+  - `src/stage2_vlm.py`：按 l1_score 降序取前 `top_n` 送 API，传 taken_at/location 进 context，按 `verdict.fit` + `require_quality_gate` 决定 l2_done / rejected。
+  - **真机验证已过**（2026-06-17）：火山 key 已落 `.env`（账号 2129097397，走 `/api/v3` 按量付费，**不占 coding 订阅**）；模型 `doubao-seed-1-6-250615`。真实研学照片端到端跑通，VLM 正确读出横幅文字 + 填全 scene/tags/mood/people_count/suitable_for，入库 1 张；噪点 fixture 被精筛门槛正确淘汰。
+  - 修过一个 bug：prompt 含 JSON 示例的 `{}` 被 `str.format` 误判 → 改用 `.replace` 只换 `{taken_at}`/`{location}`。
+- **2026-06-15**：范围调整——**不再生成文案，改产出 obwiki 式照片库**（见 io-contract.md / 设计方案 §6）。
 
 ## 项目简介
 
@@ -52,7 +56,7 @@ photo-promo/
 │   ├── siglip.py        # L1 纯逻辑：SigLIP 打分器
 │   ├── stage0_meta.py   # L0 元数据筛（已实现）
 │   ├── stage1_clip.py   # L1 SigLIP 粗筛（已实现）
-│   ├── stage2_vlm.py    # L2 VLM 精筛+结构化描述（Phase 3 待实现）
+│   ├── stage2_vlm.py    # L2 VLM 精筛+结构化描述（已实现）
 │   └── providers/       # VLMProvider 抽象 + ark 实现
 ├── prompts/             # l1 粗筛 / l2 描述 prompt
 ├── docs/io-contract.md  # 出入口契约

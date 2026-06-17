@@ -41,8 +41,8 @@
 - [x] Phase 0 骨架 — 脚手架 + config + SQLite 状态机 + 样例图
 - [x] Phase 1 L0 元数据筛 — EXIF/GPS + 模糊/亮度/尺寸 + 离线逆地理编码
 - [x] Phase 2 L1 SigLIP 粗筛 — 宣传适配度打分留 Top N%
-- [ ] Phase 3 L2 VLM 精筛+结构化语义描述 — 火山方舟 Ark，一次调用判断+出描述 JSON
-- [ ] Phase 4 串联+导出照片库 vault — 一条命令跑全链路，导出 library/ + 图间互链
+- [x] Phase 3 L2 VLM 精筛+结构化语义描述 — 火山方舟 Ark，一次调用判断+出描述 JSON
+- [x] Phase 4 串联+导出照片库 vault — 一条命令跑全链路，导出 library/ + 图间互链
 - [ ] Phase 5（可选）硬件适配 + evolve（重打分/去重/补链）
 
 ## 检索示例
@@ -79,5 +79,20 @@ grep "^## 2026-06" CHANGELOG.md                        # 2026 年 6 月所有动
 
 - Why: 三层漏斗脚手架 + SQLite 状态机 + config 中枢，让各 stage 可独立填实现
 - 详见: 6fe30fe / src/
+
+## 2026-06-17 #feat scope:export - Phase 4 导出照片库 vault
+
+- Why: 把 l2_done 入库图落成 obwiki 式 vault，供下游 agent L0→L1→L2 渐进检索
+- 详见: src/export.py（hash id / 复制原图 / 同 scene+时间邻近建 related / index.md）
+
+## 2026-06-17 #fix scope:provider-ark - prompt 含 JSON 示例致 str.format 报 KeyError
+
+- Why: prompt 里 JSON schema 的 {} 被 str.format 当占位符，真机首调即崩
+- 详见: src/providers/ark.py（改用 .replace 只换 {taken_at}/{location}）
+
+## 2026-06-17 #feat scope:stage2 scope:provider-ark - Phase 3 L2 VLM 精筛+结构化描述
+
+- Why: l1_done 少量精华图走 Ark 一次拿 verdict+结构化描述 JSON，按门槛决定入库
+- 详见: src/providers/ark.py / src/stage2_vlm.py（top_n 截断 + require_quality_gate）
 
 <!-- 新条目加在这里上方，保持最新在最上 -->
