@@ -8,7 +8,9 @@
 
 ### 概述
 **Phase 0–4 全部完成,全链路真机验证通过**。`uv run promo <dir>` 一条命令跑通 L0→L1→L2→导出 `library/` vault。
-**下一步：Phase 5（可选）evolve + 硬件适配**。对已建成 vault 做：连拍/重复去重（ADD/UPDATE/MERGE/NOOP，DELETE 只提议）、重打分、补 scene/tags、精修 `related` 互链、受控词表演化；以及 small_gpu/large_gpu/mac 硬件档位适配。
+**Phase 5（可选）已挂起,按条件触发,现在不动手**：
+- **硬件档位适配（GPU 加速）**：等到 **mac mini M4** 上再调试。让 SigLIP/VLM 按 `config.yaml` 的 `hardware` 档位走加速（mac→`mps`、small/large_gpu→`cuda`）；目前只 `hardware: cpu` 跑通,L1 的 `device` 已留单独覆盖位（`config.yaml:25`）。
+- **vault evolve（去重 + 互链/标签精修）**：等 vault 里**积累一些真实内容后**再做。包括连拍/重复去重（ADD/UPDATE/MERGE/NOOP,DELETE 只提议）、重打分、补 scene/tags、精修 `related` 互链、受控词表演化。
 
 ### 明细
 - **2026-06-17**：Phase 4 完成并真机验证。`src/export.py` 把 l2_done 导出成 obwiki 式 vault。
